@@ -1,4 +1,5 @@
-﻿@{
+﻿
+@{
     ViewBag.Title = "Derivaciones";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -10,7 +11,7 @@
     <div class="row">
 
         <div class="col-12">
-            
+
             <h4>Elija el centro de salud:</h4>
             @{
                 List<SelectListItem> listItems = new List<SelectListItem>();
@@ -22,24 +23,7 @@
             <br />
             <h4>Elija rango de fechas:</h4>
             <div id="desdeContainer"></div>
-            @*
-    <h4>Elija el centro de salud que recibe derivaciones:</h4>
-    @{
-        List<SelectListItem> listItems2 = new List<SelectListItem>();
-        listItems2.Add(new SelectListItem
-        {
-            Text = "Un centro de salud",
-            Value = "1"
-        });
-        listItems2.Add(new SelectListItem
-        {
-            Text = "Otro centro de salud",
-            Value = "2",
-        });
 
-    }
-    @Html.DropDownList("ddNavegador", new SelectList(listItems2, "Value", "Text"), htmlAttributes: new { @class = "form-control" })
-            *@
             <div id="datepicker-container">
                 <div class="input-daterange input-group" id="datepicker">
                     <span class="input-group-addon">Fecha desde</span>
@@ -67,7 +51,7 @@
     $(function () {
 
         $('#datepicker-container input').datepicker({});
-        
+
         $.ajax({
             type: "POST",
             async: true,
@@ -90,7 +74,7 @@
     function fillDropDownCS(cs) {
 
         var options = $(".csDD");
- 
+
         $.each(cs, function () {
             options.append($("<option />").val(this.id).text(this.Nombre));
         });
@@ -99,7 +83,7 @@
 
     $("#grafDerivaciones").click(mostrarDerivaciones);
 
-    
+
     function mostrarDerivaciones() {
 
         var fechaCambiadaDesde = changeDateString($("#dateDesde"));
@@ -124,7 +108,7 @@
                 success: function(data)
                 {
                     mostrarGraficoDerivaciones(data);
-                
+
                 },
                 error: function(e)
                 {
@@ -139,20 +123,30 @@
 
     function mostrarGraficoDerivaciones(result) {
 
+        console.dir(result)
+
         var hacia = [];
+        var cantidades = [];
 
         for (var index in result) {
-
+            /*
             for (var oindex in csHaciaNombres) {
 
                 if (csHaciaNombres[oindex].id == result[index].HACIAID) {
 
                     hacia.push(csHaciaNombres[oindex].Nombre);
                 }
-            }
+            }*/
+
+            cantidades.push(result[index].Cantidad);
+            hacia.push(result[index].NOMBRE);
         }
 
         console.dir(hacia)
+
+        //console.dir(result)
+
+
 
         var derivacionesChart = Highcharts.chart('derivacionesContainer', {
             chart: {
@@ -162,20 +156,18 @@
                 text: 'El centro de salud ' + $("#ddNavegador").find("option:selected").text() + ' recibe las siguientes derivaciones: '
             },
             xAxis: {
+                text: 'Centros de Salud',
                 categories: hacia
             },
             yAxis: {
                 title: {
-                    text: 'Centros de salud'
+                    text: 'Cantidad de derivaciones'
                 }
             },
             series: [{
-                name: 'Jane',
-                data: [1, 0, 4]
-            }, {
-                name: 'John',
-                data: [5, 7, 3]
-            }]
+                        text: 'Derivaciones',
+                        data: cantidades
+                    }]
         });
     }
 
@@ -189,7 +181,7 @@
 
         return dateSplited[2] + '-' + dateSplited[0] + '-' + dateSplited[1];
     }
-    
 
-        
+
+
 </script>
