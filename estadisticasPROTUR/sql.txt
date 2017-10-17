@@ -1,20 +1,50 @@
-alter procedure spGetProturDerivado (@cs int, @fd date, @fh date  ) as
+alter procedure spGetProturDerivado (@cs int, @fd date, @fh date, @espId  int ) as
 begin 
-   SELECT PEC2.id as HACIAID ,PEC2.Nombre AS NOMBRE, COUNT(*) AS Cantidad FROM ProturRegistros PR 
-    LEFT JOIN ProturEquivalenciasCaps PEC ON PR.CS = PEC.id
-    LEFT JOIN ProturEquivalenciasCaps PEC2 ON PR.CT = PEC2.id
-    WHERE PR.TT = 1 and PEC.id=@cs and
-    (PR.DC between @fd and @fh)
-    GROUP BY  PEC2.id, PEC2.Nombre
+
+    if @espId is null
+	   begin 
+		 SELECT PEC2.id as HACIAID, ESPE.Nombre as ESPECIALIDAD,PEC2.Nombre AS NOMBRE, COUNT(*) AS Cantidad FROM ProturRegistros PR 
+		  LEFT JOIN ProturEquivalenciasCaps PEC ON PR.CS = PEC.id
+		  LEFT JOIN ProturEquivalenciasCaps PEC2 ON PR.CT = PEC2.id
+		  LEFT JOIN Especialidad ESPE ON PR.ET = ESPE.id
+		  WHERE PR.TT = 1 and PEC.id=@cs and
+		  (PR.DC between @fd and @fh)
+		  GROUP BY  PEC2.id, PEC2.Nombre, ESPE.Nombre
+	   end
+	else
+	begin 
+		 SELECT PEC2.id as HACIAID, ESPE.Nombre as ESPECIALIDAD,PEC2.Nombre AS NOMBRE, COUNT(*) AS Cantidad FROM ProturRegistros PR 
+		  LEFT JOIN ProturEquivalenciasCaps PEC ON PR.CS = PEC.id
+		  LEFT JOIN ProturEquivalenciasCaps PEC2 ON PR.CT = PEC2.id
+		  LEFT JOIN Especialidad ESPE ON PR.ET = ESPE.id
+		  WHERE PR.TT = 1 and PEC.id=@cs and
+		  (PR.DC between @fd and @fh) and ESPE.id = @espId
+		  GROUP BY  PEC2.id, PEC2.Nombre, ESPE.Nombre
+	   end
 end
 
 
-alter PROCEDURE spGetProturProgramado (@cs int, @fd date, @fh date  ) as
+alter PROCEDURE spGetProturProgramado (@cs int, @fd date, @fh date,@espId  int   ) as
 begin
-    SELECT PEC2.id AS HACIAID, PEC2.Nombre as NOMBRE , COUNT(*) AS Cantidad FROM ProturRegistros PR 
-    LEFT JOIN ProturEquivalenciasCaps PEC ON PR.CS = PEC.id
-    LEFT JOIN ProturEquivalenciasCaps PEC2 ON PR.PC = PEC2.id
-    WHERE (PR.TA = 0 and PR.PE= 1)  and PEC.id=@cs and
-    (PR.FP between @fd and @fh)
-    GROUP BY  PEC2.id, PEC2. Nombre
+
+    if @espId is null
+	   begin
+		  SELECT PEC2.id AS HACIAID,ESPE.Nombre as ESPECIALIDAD, PEC2.Nombre as NOMBRE , COUNT(*) AS Cantidad FROM ProturRegistros PR 
+		  LEFT JOIN ProturEquivalenciasCaps PEC ON PR.CS = PEC.id
+		  LEFT JOIN ProturEquivalenciasCaps PEC2 ON PR.PC = PEC2.id
+		  LEFT JOIN Especialidad ESPE ON PR.PC = ESPE.id
+		  WHERE (PR.TA = 0 and PR.PE= 1)  and PEC.id=@cs and
+		  (PR.FP between @fd and @fh)
+		  GROUP BY  PEC2.id, PEC2.Nombre,ESPE.Nombre
+	   end
+    else
+    begin
+		  SELECT PEC2.id AS HACIAID,ESPE.Nombre as ESPECIALIDAD, PEC2.Nombre as NOMBRE , COUNT(*) AS Cantidad FROM ProturRegistros PR 
+		  LEFT JOIN ProturEquivalenciasCaps PEC ON PR.CS = PEC.id
+		  LEFT JOIN ProturEquivalenciasCaps PEC2 ON PR.PC = PEC2.id
+		  LEFT JOIN Especialidad ESPE ON PR.PC = ESPE.id
+		  WHERE (PR.TA = 0 and PR.PE= 1)  and PEC.id=@cs and
+		  (PR.FP between @fd and @fh) and ESPE.id = @espId
+		  GROUP BY  PEC2.id, PEC2.Nombre,ESPE.Nombre
+	   end
 end
