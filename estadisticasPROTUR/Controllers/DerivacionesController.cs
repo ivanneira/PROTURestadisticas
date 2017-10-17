@@ -111,7 +111,7 @@ namespace estadisticasPROTUR.Controllers
 
 
             cx = new SqlConnection(ConfigurationManager.ConnectionStrings["DB_ARES"].ConnectionString);
-            consulta = "exec spGetProturProgramado @id @fd @fh";
+            consulta = "exec spGetProturProgramado @id, @fd, @fh";
 
             SqlDataAdapter da = new SqlDataAdapter(consulta, cx);
             da.SelectCommand.Parameters.AddWithValue("@id", csId);
