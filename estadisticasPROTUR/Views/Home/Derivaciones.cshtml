@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Derivaciones</h2>
+<h2>Reportes</h2>
 
 <div class="container">
 
@@ -44,6 +44,8 @@
         </div>
 
     <div id="derivacionesContainer"></div>
+
+    <div id="programacionesContainer"></div>
 
 </div>
 
@@ -96,7 +98,90 @@
     }
 
 
-    $("#grafDerivaciones").click(mostrarDerivaciones);
+    $("#grafDerivaciones").click(llenarGraficos);
+
+    function llenarGraficos() {
+
+        mostrarDerivaciones();
+
+        mostrarProgramaciones();
+    }
+
+    function mostrarProgramaciones() {
+
+        //console.log("asdf")
+        var fechaCambiadaDesde = changeDateString($("#dateDesde"));
+        var fechaCambiadaHasta = changeDateString($("#dateHasta"));
+
+        if (fechaCambiadaDesde === false || fechaCambiadaHasta == false) {
+
+            alert("Ingrese ambas fechas por favor");
+
+        }else{
+
+
+            $.ajax({
+                type: "POST",
+                async: true,
+                data: {
+                    'csid': $(".csDD").find("option:selected").val(),
+                    'fd': fechaCambiadaDesde,
+                    'fh': fechaCambiadaHasta
+                },
+                url: "@Url.Action("GetProturProgramado", "Derivaciones")",
+                success: function(data)
+                {
+                    mostrarGraficoProgramaciones(data);
+
+                },
+                error: function(e)
+                {
+                    event.stopPropagation();
+                    alert("error al acceder al servidor, recargue la página e intente nuevamente");
+                    console.dir(e);
+                }
+            });
+        }
+
+    }
+
+    function mostrarGraficoProgramaciones(result) {
+
+        console.dir(result)
+
+        var hacia = [];
+        var cantidades = [];
+
+        for (var index in result) {
+
+            cantidades.push(result[index].Cantidad);
+            hacia.push(result[index].NOMBRE);
+        }
+
+
+        var derivacionesChart = Highcharts.chart('programacionesContainer', {
+            chart: {
+                type: 'bar'
+            },
+            title: {
+                text: 'El centro de salud ' + $("#ddNavegador").find("option:selected").text() + ' deriva a los siguientes centros de salud: '
+            },
+            xAxis: {
+                text: 'Centros de Salud',
+                categories: hacia
+            },
+            yAxis: {
+                title: {
+                    text: 'Cantidad de derivaciones'
+                }
+            },
+            series: [{
+                text: 'Derivaciones',
+                data: cantidades
+            }]
+        });
+
+    }
 
 
     function mostrarDerivaciones() {
@@ -106,7 +191,7 @@
 
         if (fechaCambiadaDesde === false || fechaCambiadaHasta == false) {
 
-            alert("Ingrese amba fechas por favor");
+            alert("Ingrese ambas fechas por favor");
 
         }else{
 
@@ -138,7 +223,7 @@
 
     function mostrarGraficoDerivaciones(result) {
 
-        console.dir(result)
+        //console.dir(result)
 
         var hacia = [];
         var cantidades = [];
@@ -157,7 +242,7 @@
             hacia.push(result[index].NOMBRE);
         }
 
-        console.dir(hacia)
+        //console.dir(hacia)
 
         //console.dir(result)
 
