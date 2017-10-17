@@ -1,3 +1,9 @@
 estadisticasPROTUR/bin
-estadisticasPROTUR/obj
+
 .vs
+*.cache
+*.cache
+estadisticasPROTUR/obj/Debug/estadisticasPROTUR.pdb
+*.dll
+estadisticasPROTUR/obj/Debug/estadisticasPROTUR.csprojResolveAssemblyReference.cache
+*.txt
