@@ -14,31 +14,34 @@
 
             <h4>Elija el centro de salud:</h4>
             @{
-                List<SelectListItem> listItems = new List<SelectListItem>();
-
-
+                //List<SelectListItem> listItems = new List<SelectListItem>();
             }
-            @Html.DropDownList("ddNavegador", new SelectList(listItems, "Value", "Text"), htmlAttributes: new { @class = "form-control csDD" })
+            
 
-            <br />
-            <h4>Elija rango de fechas:</h4>
-            <div id="desdeContainer"></div>
 
-            <div id="datepicker-container">
-                <div class="input-daterange input-group" id="datepicker">
-                    <span class="input-group-addon">Fecha desde</span>
-                    <input id="dateDesde" type="text" class="input-sm form-control" name="start" />
-                    <span class="input-group-addon">Fecha hasta</span>
-                    <input id="dateHasta" type="text" class="input-sm form-control" name="end" />
+            <div class="form-group">
+                <select required id="ddNavegador" name="ddNavegador" class="selectpicker" data-live-search="true" title="Seleccione un centro de salud..."></select>
+
+                <br />
+                <h4>Elija rango de fechas:</h4>
+                <div id="desdeContainer"></div>
+
+                <div id="datepicker-container">
+                    <div class="input-daterange input-group" id="datepicker">
+                        <span class="input-group-addon">Fecha desde</span>
+                        <input id="dateDesde" type="text" class="input-sm form-control" name="start" />
+                        <span class="input-group-addon">Fecha hasta</span>
+                        <input id="dateHasta" type="text" class="input-sm form-control" name="end" />
+                    </div>
+                </div>
+
+                <br />
+
+                <button class="btn btn-success" id="grafDerivaciones">Mostrar Gráfico</button>
+
                 </div>
             </div>
-
-            <br />
-
-            <button class="btn btn-success" id="grafDerivaciones">Mostrar Gráfico</button>
-
         </div>
-    </div>
 
     <div id="derivacionesContainer"></div>
 
@@ -49,6 +52,12 @@
     var csHaciaNombres = [];
 
     $(function () {
+
+
+        $('.selectpicker').selectpicker({
+            style: 'btn-default',
+            size: 4
+        });
 
         $('#datepicker-container input').datepicker({});
 
@@ -76,8 +85,14 @@
         var options = $(".csDD");
 
         $.each(cs, function () {
-            options.append($("<option />").val(this.id).text(this.Nombre));
+            $("#ddNavegador")
+                .append("<option value=" +
+                this.id +
+                "> " +
+                this.Nombre +
+                " </option>");
         });
+        $('#ddNavegador').selectpicker('refresh');
     }
 
 
@@ -100,7 +115,7 @@
                 type: "POST",
                 async: true,
                 data: {
-                    'csid': $(".csDD").find("option:selected").val(),
+                    'csid': $("#ddNavegador").find("option:selected").val(),
                     'fd': fechaCambiadaDesde,
                     'fh': fechaCambiadaHasta
                 },

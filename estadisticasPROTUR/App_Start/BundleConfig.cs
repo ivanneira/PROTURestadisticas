@@ -43,6 +43,12 @@ namespace estadisticasPROTUR
                       "~/Scripts/bootstrap-datepicker.es.js",
                       "~/Scripts/bootstrap-datepicker.min.js"));
 
+            bundles.Add(new StyleBundle("~/Content/bootstrap-select").Include(
+                        "~/Content/bootstrap-select.min.css"));
+
+            bundles.Add(new ScriptBundle("~/bundles/bootstrap-select").Include(
+                      "~/Scripts/bootstrap-select.min.js"));
+
         }
     }
 }
